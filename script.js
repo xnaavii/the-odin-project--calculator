@@ -26,7 +26,7 @@ const updateOperator = (o) => {
 
 digits.forEach((d) =>
   d.addEventListener('click', (e) => {
-    const value = d.dataset.value;
+    const value = Number(d.dataset.value);
     if (!firstNum) {
       updateFirstNumber(value);
     } else {
@@ -39,15 +39,36 @@ operators.forEach((o) =>
   o.addEventListener('click', (e) => {
     const value = o.dataset.value;
 
-    if (!firstNum) {
+    if (firstNum && operator && secondNum) {
+      if (value === '=') {
+        let result = operate(operator, firstNum, secondNum);
+        console.log(result);
+        return;
+      }
       return;
     }
 
-    updateOperator(value);
+    if (firstNum) {
+      updateOperator(value);
+    }
   }),
 );
 
-const operate = (operator, a, b) => operator(a, b);
+const operate = (operator, a, b) => {
+  switch (operator) {
+    case '+':
+      return add(a, b);
+      break;
+    case '-':
+      return subtract(a, b);
+    case '*':
+      return multiply(a, b);
+    case '/':
+      return divide(a, b);
+    default:
+      break;
+  }
+};
 
 // Basic arithmetic operations
 const add = (a, b) => a + b;
