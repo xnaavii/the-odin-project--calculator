@@ -12,20 +12,12 @@ let result = 0;
 let operator = '';
 
 const updateFirstNumber = (value) => {
-  if (!firstNum) {
-    firstNum = value;
-  } else {
-    firstNum += value;
-  }
+  firstNum = firstNum === 0 ? value : firstNum + value;
   firstNumber.textContent = firstNum;
 };
 
 const updateSecondNumber = (value) => {
-  if (!secondNum) {
-    secondNum = value;
-  } else {
-    secondNum += value;
-  }
+  secondNum = secondNum === 0 ? value : secondNum + value;
   secondNumber.textContent = secondNum;
 };
 
@@ -109,15 +101,12 @@ const operate = (operator, a, b) => {
   switch (operator) {
     case '+':
       return add(a, b);
-      break;
     case '-':
       return subtract(a, b);
     case '*':
       return multiply(a, b);
     case '/':
       return divide(a, b);
-    default:
-      break;
   }
 };
 
