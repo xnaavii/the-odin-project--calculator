@@ -57,7 +57,7 @@ operators.forEach((o) =>
 
     if (firstNum && operator && secondNum) {
       if (value === '=') {
-        result = operate(operator, firstNum, secondNum);
+        result = operate(operator, +firstNum, +secondNum);
         updateResult(result);
         return;
       }
