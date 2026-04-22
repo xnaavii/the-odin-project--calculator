@@ -28,7 +28,6 @@ const updateOperator = (value) => {
 
 const updateResult = (value) => {
   result = Math.round(value * 1e10) / 1e10;
-  console.log(value);
   resultEl.textContent = result;
 };
 
