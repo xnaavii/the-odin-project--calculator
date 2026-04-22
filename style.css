@@ -54,3 +54,8 @@ body {
 .digit:hover {
   background-color: #868e96;
 }
+
+.operator:active,
+.digit:active {
+  transform: scale(1.01);
+}
