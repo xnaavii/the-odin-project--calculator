@@ -70,23 +70,36 @@ operators.forEach((o) =>
   o.addEventListener('click', (e) => {
     const value = o.dataset.value;
 
+    if (value === '=' && !secondNum) {
+      return;
+    }
+
     if (value === 'c') {
       clear();
       return;
     }
 
     if (firstNum && operator && secondNum) {
+      // Chain multiple operands e.g. 1 + 1 - 1
+      if (value === '+' || value === '-' || value === '*' || value === '/') {
+        let newResult = operate(operator, +firstNum, +secondNum);
+        clear();
+        updateFirstNumber(newResult);
+        updateOperator(value);
+        return;
+      }
+
       if (value === '=') {
         let newResult = operate(operator, +firstNum, +secondNum);
         clear();
-        result = newResult;
-        updateResult(result);
+        updateResult(newResult);
         return;
       }
+
       return;
     }
 
-    if (firstNum) {
+    if (firstNum && value !== '=') {
       updateOperator(value);
     }
   }),
