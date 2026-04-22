@@ -2,13 +2,13 @@ const calculator = document.querySelector('#calculator');
 const firstNumber = document.querySelector('#firstNumber');
 const digits = document.querySelectorAll('.digit');
 
-let a = 0;
-let b = 0;
+let firstNum = 0;
+let secondNum = 0;
 let operator = 0;
 
 const updateFirstNumber = (value) => {
-  a = value;
-  firstNumber.textContent = a;
+  firstNum = value;
+  firstNumber.textContent = firstNum;
 };
 
 digits.forEach((d) =>
