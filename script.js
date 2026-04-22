@@ -1,6 +1,7 @@
 const calculator = document.querySelector('#calculator');
 const firstNumber = document.querySelector('#firstNumber');
 const secondNumber = document.querySelector('#secondNumber');
+const resultEl = document.querySelector('#result');
 const currentOperator = document.querySelector('#currentOperator');
 const digits = document.querySelectorAll('.digit');
 const operators = document.querySelectorAll('.operator');
@@ -8,6 +9,7 @@ const operators = document.querySelectorAll('.operator');
 let firstNum = 0;
 let secondNum = 0;
 let operator = '';
+let result = 0;
 
 const updateFirstNumber = (value) => {
   firstNum = value;
@@ -22,6 +24,11 @@ const updateSecondNumber = (value) => {
 const updateOperator = (o) => {
   operator = o;
   currentOperator.textContent = operator;
+};
+
+const updateResult = (value) => {
+  result = value;
+  resultEl.textContent = result;
 };
 
 digits.forEach((d) =>
@@ -41,8 +48,8 @@ operators.forEach((o) =>
 
     if (firstNum && operator && secondNum) {
       if (value === '=') {
-        let result = operate(operator, firstNum, secondNum);
-        console.log(result);
+        result = operate(operator, firstNum, secondNum);
+        updateResult(result);
         return;
       }
       return;
