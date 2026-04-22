@@ -3,6 +3,7 @@ const firstNumber = document.querySelector('#firstNumber');
 const secondNumber = document.querySelector('#secondNumber');
 const currentOperator = document.querySelector('#currentOperator');
 const digits = document.querySelectorAll('.digit');
+const operators = document.querySelectorAll('.operator');
 
 let firstNum = 0;
 let secondNum = 0;
@@ -31,6 +32,18 @@ digits.forEach((d) =>
     } else {
       updateSecondNumber(value);
     }
+  }),
+);
+
+operators.forEach((o) =>
+  o.addEventListener('click', (e) => {
+    const value = o.dataset.value;
+
+    if (!firstNum) {
+      return;
+    }
+
+    updateOperator(value);
   }),
 );
 
