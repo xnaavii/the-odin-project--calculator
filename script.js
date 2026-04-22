@@ -54,6 +54,10 @@ digits.forEach((d) =>
   d.addEventListener('click', (e) => {
     const value = d.dataset.value;
 
+    if (result) {
+      clear();
+    }
+
     if (firstNum && operator) {
       updateSecondNumber(value);
     } else {
@@ -73,7 +77,9 @@ operators.forEach((o) =>
 
     if (firstNum && operator && secondNum) {
       if (value === '=') {
-        result = operate(operator, +firstNum, +secondNum);
+        let newResult = operate(operator, +firstNum, +secondNum);
+        clear();
+        result = newResult;
         updateResult(result);
         return;
       }
