@@ -8,8 +8,8 @@ const operators = document.querySelectorAll('.operator');
 
 let firstNum = 0;
 let secondNum = 0;
-let operator = '';
 let result = 0;
+let operator = '';
 
 const updateFirstNumber = (value) => {
   if (!firstNum) {
@@ -39,6 +39,17 @@ const updateResult = (value) => {
   resultEl.textContent = result;
 };
 
+const clear = () => {
+  firstNum = 0;
+  secondNum = 0;
+  result = 0;
+  operator = '';
+  firstNumber.textContent = '';
+  secondNumber.textContent = '';
+  currentOperator.textContent = '';
+  resultEl.textContent = '';
+};
+
 digits.forEach((d) =>
   d.addEventListener('click', (e) => {
     const value = d.dataset.value;
@@ -54,6 +65,11 @@ digits.forEach((d) =>
 operators.forEach((o) =>
   o.addEventListener('click', (e) => {
     const value = o.dataset.value;
+
+    if (value === 'c') {
+      clear();
+      return;
+    }
 
     if (firstNum && operator && secondNum) {
       if (value === '=') {
