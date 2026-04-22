@@ -42,3 +42,15 @@ body {
   background-color: #495057;
   color: #f8f9fa;
 }
+
+.operator {
+  background-color: #ff922b;
+}
+
+.operator:hover {
+  background-color: #ffa94d;
+}
+
+.digit:hover {
+  background-color: #868e96;
+}
