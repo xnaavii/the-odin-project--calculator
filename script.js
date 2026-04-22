@@ -1,5 +1,6 @@
 const calculator = document.querySelector('#calculator');
 const firstNumber = document.querySelector('#firstNumber');
+const secondNumber = document.querySelector('#secondNumber');
 const digits = document.querySelectorAll('.digit');
 
 let firstNum = 0;
@@ -11,10 +12,19 @@ const updateFirstNumber = (value) => {
   firstNumber.textContent = firstNum;
 };
 
+const updateSecondNumber = (value) => {
+  secondNum = value;
+  secondNumber.textContent = secondNum;
+};
+
 digits.forEach((d) =>
   d.addEventListener('click', (e) => {
     const value = d.dataset.value;
-    updateFirstNumber(value);
+    if (!firstNum) {
+      updateFirstNumber(value);
+    } else {
+      updateSecondNumber(value);
+    }
   }),
 );
 
