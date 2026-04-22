@@ -12,12 +12,20 @@ let operator = '';
 let result = 0;
 
 const updateFirstNumber = (value) => {
-  firstNum = value;
+  if (!firstNum) {
+    firstNum = value;
+  } else {
+    firstNum += value;
+  }
   firstNumber.textContent = firstNum;
 };
 
 const updateSecondNumber = (value) => {
-  secondNum = value;
+  if (!secondNum) {
+    secondNum = value;
+  } else {
+    secondNum += value;
+  }
   secondNumber.textContent = secondNum;
 };
 
@@ -33,11 +41,12 @@ const updateResult = (value) => {
 
 digits.forEach((d) =>
   d.addEventListener('click', (e) => {
-    const value = Number(d.dataset.value);
-    if (!firstNum) {
-      updateFirstNumber(value);
-    } else {
+    const value = d.dataset.value;
+
+    if (firstNum && operator) {
       updateSecondNumber(value);
+    } else {
+      updateFirstNumber(value);
     }
   }),
 );
