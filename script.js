@@ -21,8 +21,8 @@ const updateSecondNumber = (value) => {
   secondNumber.textContent = secondNum;
 };
 
-const updateOperator = (o) => {
-  operator = o;
+const updateOperator = (value) => {
+  operator = value;
   currentOperator.textContent = operator;
 };
 
