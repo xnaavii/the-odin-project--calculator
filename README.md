@@ -2,7 +2,7 @@
 
 A JavaScript calculator built as part of learning DOM manipulation and event handling.
 
-[Live Demo](#) · [Source Code](#)
+[Live Demo](https://xnaavii.github.io/the-odin-project--calculator/) · [Source Code](https://github.com/xnaavii/the-odin-project--calculator)
 
 ## Features
 
