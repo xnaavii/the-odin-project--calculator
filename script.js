@@ -8,12 +8,11 @@ const digits = document.querySelectorAll('.digit');
 const operators = document.querySelectorAll('.operator');
 const errorEl = document.querySelector('#error');
 
-let firstNum = 0;
-let secondNum = 0;
-let result = 0;
+let firstNum = '';
+let secondNum = '';
+let result = '';
 let operator = '';
 
-// Basic arithmetic operations
 const add = (a, b) => a + b;
 const subtract = (a, b) => a - b;
 const multiply = (a, b) => a * b;
@@ -29,16 +28,18 @@ const operate = (operator, a, b) => {
       return multiply(a, b);
     case '/':
       return divide(a, b);
+    default:
+      throw new Error(`Unknown operator: ${operator}`);
   }
 };
 
 const updateFirstNumber = (value) => {
-  firstNum = firstNum === 0 ? value : firstNum + value;
+  firstNum = firstNum === '' ? value : firstNum + value;
   firstNumber.textContent = firstNum;
 };
 
 const updateSecondNumber = (value) => {
-  secondNum = secondNum === 0 ? value : secondNum + value;
+  secondNum = secondNum === '' ? value : secondNum + value;
   secondNumber.textContent = secondNum;
 };
 
@@ -48,14 +49,14 @@ const updateOperator = (value) => {
 };
 
 const updateResult = (value) => {
-  result = Math.round(value * 1e10) / 1e10;
+  result = String(Math.round(value * 1e10) / 1e10);
   resultEl.textContent = result;
 };
 
 const clear = () => {
-  firstNum = 0;
-  secondNum = 0;
-  result = 0;
+  firstNum = '';
+  secondNum = '';
+  result = '';
   operator = '';
   firstNumber.textContent = '';
   secondNumber.textContent = '';
@@ -65,7 +66,7 @@ const clear = () => {
 };
 
 const handleDigitInput = (input) => {
-  if (result) {
+  if (result || errorEl.textContent !== '') {
     clear();
   }
 
@@ -76,51 +77,45 @@ const handleDigitInput = (input) => {
   }
 };
 
-const handleOperatorInput = (input) => {
-  if (input === '=' && !secondNum) {
-    return;
+const tryOperate = () => {
+  if (secondNum === '') return null;
+
+  if (operator === '/' && +secondNum === 0) {
+    clear();
+    errorEl.textContent = 'You shall not pass!';
+    return null;
   }
+
+  const newResult = operate(operator, +firstNum, +secondNum);
+
+  if (isNaN(newResult)) {
+    clear();
+    errorEl.textContent = 'Something went wrong.';
+    return null;
+  }
+
+  return newResult;
+};
+
+const handleOperatorInput = (input) => {
+  if (input === '=' && !secondNum) return;
 
   if (input === 'c') {
     clear();
     return;
   }
 
-  if (isNaN(result)) {
-    throw new Error('You bastard');
-    clear();
-    errorEl.textContent = 'You bastard.';
-  }
-
   if (firstNum && operator && secondNum) {
-    if (+firstNum === 0 && operator === '/' && +secondNum === 0) {
-      try {
-        let newResult = operate(operator, +firstNum, +secondNum);
-        if (isNaN(newResult)) {
-          clear();
-          throw new Error('You shall not pass!');
-        }
-      } catch (error) {
-        errorEl.textContent = error.message;
-        return;
-      }
-    }
+    const newResult = tryOperate();
+    if (newResult === null) return;
 
-    if (input === '+' || input === '-' || input === '*' || input === '/') {
-      // Chain multiple operands e.g. 1 + 1 - 1
-      let newResult = operate(operator, +firstNum, +secondNum);
-      clear();
-      updateFirstNumber(newResult);
-      updateOperator(input);
-      return;
-    }
+    clear();
 
     if (input === '=') {
-      let newResult = operate(operator, +firstNum, +secondNum);
-
-      clear();
       updateResult(newResult);
-      return;
+    } else {
+      updateFirstNumber(String(newResult));
+      updateOperator(input);
     }
 
     return;
@@ -145,55 +140,41 @@ containers.forEach((container) => {
   });
 });
 
-// Keyboard support
 document.addEventListener('keydown', (e) => {
   digits.forEach((d) => {
     const value = d.dataset.value;
-    if (e.key === value) {
-      handleDigitInput(value);
-    }
+    if (e.key === value) handleDigitInput(value);
   });
 
   operators.forEach((o) => {
     const value = o.dataset.value;
-    if (e.key === value) {
-      handleOperatorInput(value);
-    }
+    if (e.key === value) handleOperatorInput(value);
   });
 
   if (e.key === 'Backspace') {
-    const index = -1;
-
     if (secondNum) {
-      if (secondNum !== '') {
-        secondNum = secondNum.slice(0, index);
-        secondNumber.textContent = secondNum;
-        return;
-      }
+      secondNum = secondNum.slice(0, -1);
+      secondNumber.textContent = secondNum;
+      return;
     }
 
     if (operator) {
-      if (operator !== '') {
-        operator = operator.slice(0, index);
-        currentOperator.textContent = operator;
-        return;
-      }
+      operator = operator.slice(0, -1);
+      currentOperator.textContent = operator;
+      return;
     }
 
     if (firstNum) {
-      if (firstNum !== '') {
-        firstNum = firstNum.slice(0, index);
-        firstNumber.textContent = firstNum;
-        return;
-      }
+      firstNum = firstNum.slice(0, -1);
+      firstNumber.textContent = firstNum;
+      return;
     }
   }
 
   if (e.key === 'Enter') {
-    let newResult = operate(operator, +firstNum, +secondNum);
-
+    const newResult = tryOperate();
+    if (newResult === null) return;
     clear();
     updateResult(newResult);
-    return;
   }
 });
