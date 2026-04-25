@@ -64,75 +64,136 @@ const clear = () => {
   errorEl.textContent = '';
 };
 
+const handleDigitInput = (input) => {
+  if (result) {
+    clear();
+  }
+
+  if (firstNum && operator) {
+    updateSecondNumber(input);
+  } else {
+    updateFirstNumber(input);
+  }
+};
+
+const handleOperatorInput = (input) => {
+  if (input === '=' && !secondNum) {
+    return;
+  }
+
+  if (input === 'c') {
+    clear();
+    return;
+  }
+
+  if (isNaN(result)) {
+    throw new Error('You bastard');
+    clear();
+    errorEl.textContent = 'You bastard.';
+  }
+
+  if (firstNum && operator && secondNum) {
+    if (+firstNum === 0 && operator === '/' && +secondNum === 0) {
+      try {
+        let newResult = operate(operator, +firstNum, +secondNum);
+        if (isNaN(newResult)) {
+          clear();
+          throw new Error('You shall not pass!');
+        }
+      } catch (error) {
+        errorEl.textContent = error.message;
+        return;
+      }
+    }
+
+    if (input === '+' || input === '-' || input === '*' || input === '/') {
+      // Chain multiple operands e.g. 1 + 1 - 1
+      let newResult = operate(operator, +firstNum, +secondNum);
+      clear();
+      updateFirstNumber(newResult);
+      updateOperator(input);
+      return;
+    }
+
+    if (input === '=') {
+      let newResult = operate(operator, +firstNum, +secondNum);
+
+      clear();
+      updateResult(newResult);
+      return;
+    }
+
+    return;
+  }
+
+  if (firstNum && input !== '=') {
+    updateOperator(input);
+  }
+};
+
 containers.forEach((container) => {
   container.addEventListener('click', (e) => {
     const value = e.target.dataset.value;
 
     if (e.target.classList.contains('digit')) {
-      if (result) {
-        clear();
-      }
-
-      if (firstNum && operator) {
-        updateSecondNumber(value);
-      } else {
-        updateFirstNumber(value);
-      }
+      handleDigitInput(value);
     }
 
     if (e.target.classList.contains('operator')) {
-      if (value === '=' && !secondNum) {
-        return;
-      }
-
-      if (value === 'c') {
-        clear();
-        return;
-      }
-
-      if (isNaN(result)) {
-        throw new Error('You bastard');
-        clear();
-        errorEl.textContent = 'You bastard.';
-      }
-
-      if (firstNum && operator && secondNum) {
-        if (+firstNum === 0 && operator === '/' && +secondNum === 0) {
-          try {
-            let newResult = operate(operator, +firstNum, +secondNum);
-            if (isNaN(newResult)) {
-              clear();
-              throw new Error('You shall not pass!');
-            }
-          } catch (error) {
-            errorEl.textContent = error.message;
-            return;
-          }
-        }
-
-        if (value === '+' || value === '-' || value === '*' || value === '/') {
-          // Chain multiple operands e.g. 1 + 1 - 1
-          let newResult = operate(operator, +firstNum, +secondNum);
-          clear();
-          updateFirstNumber(newResult);
-          updateOperator(value);
-          return;
-        }
-
-        if (value === '=') {
-          let newResult = operate(operator, +firstNum, +secondNum);
-
-          clear();
-          updateResult(newResult);
-          return;
-        }
-
-        return;
-      }
-
-      if (firstNum && value !== '=') {
-        updateOperator(value);
-      }
+      handleOperatorInput(value);
     }
   });
+});
+
+// Keyboard support
+document.addEventListener('keydown', (e) => {
+  digits.forEach((d) => {
+    const value = d.dataset.value;
+    if (e.key === value) {
+      handleDigitInput(value);
+    }
+  });
+
+  operators.forEach((o) => {
+    const value = o.dataset.value;
+    if (e.key === value) {
+      handleOperatorInput(value);
+    }
+  });
+
+  if (e.key === 'Backspace') {
+    const index = -1;
+
+    if (secondNum) {
+      if (secondNum !== '') {
+        secondNum = secondNum.slice(0, index);
+        secondNumber.textContent = secondNum;
+        return;
+      }
+    }
+
+    if (operator) {
+      if (operator !== '') {
+        operator = operator.slice(0, index);
+        currentOperator.textContent = operator;
+        return;
+      }
+    }
+
+    if (firstNum) {
+      if (firstNum !== '') {
+        firstNum = firstNum.slice(0, index);
+        firstNumber.textContent = firstNum;
+        return;
+      }
+    }
+  }
+
+  if (e.key === 'Enter') {
+    let newResult = operate(operator, +firstNum, +secondNum);
+
+    clear();
+    updateResult(newResult);
+    return;
+  }
 });
