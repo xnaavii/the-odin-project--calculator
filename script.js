@@ -5,6 +5,7 @@ const resultEl = document.querySelector('#result');
 const currentOperator = document.querySelector('#currentOperator');
 const digits = document.querySelectorAll('.digit');
 const operators = document.querySelectorAll('.operator');
+const errorEl = document.querySelector('#error');
 
 let firstNum = 0;
 let secondNum = 0;
@@ -40,6 +41,7 @@ const clear = () => {
   secondNumber.textContent = '';
   currentOperator.textContent = '';
   resultEl.textContent = '';
+  errorEl.textContent = '';
 };
 
 digits.forEach((d) =>
@@ -71,9 +73,30 @@ operators.forEach((o) =>
       return;
     }
 
+    // TODO: Add keyboard support
+
+    if (isNaN(result)) {
+      throw new Error('You bastard');
+      clear();
+      errorEl.textContent = 'You bastard.';
+    }
+
     if (firstNum && operator && secondNum) {
-      // Chain multiple operands e.g. 1 + 1 - 1
+      if (+firstNum === 0 && operator === '/' && +secondNum === 0) {
+        try {
+          let newResult = operate(operator, +firstNum, +secondNum);
+          if (isNaN(newResult)) {
+            clear();
+            throw new Error('You shall not pass!');
+          }
+        } catch (error) {
+          errorEl.textContent = error.message;
+          return;
+        }
+      }
+
       if (value === '+' || value === '-' || value === '*' || value === '/') {
+        // Chain multiple operands e.g. 1 + 1 - 1
         let newResult = operate(operator, +firstNum, +secondNum);
         clear();
         updateFirstNumber(newResult);
@@ -83,6 +106,7 @@ operators.forEach((o) =>
 
       if (value === '=') {
         let newResult = operate(operator, +firstNum, +secondNum);
+
         clear();
         updateResult(newResult);
         return;

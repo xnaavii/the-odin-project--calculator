@@ -73,3 +73,7 @@ body {
 .digit:active {
   transform: scale(1.01);
 }
+
+#error {
+  color: #c44646
+}
