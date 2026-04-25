@@ -1,4 +1,5 @@
 const calculator = document.querySelector('#calculator');
+const containers = document.querySelectorAll('.container');
 const firstNumber = document.querySelector('#firstNumber');
 const secondNumber = document.querySelector('#secondNumber');
 const resultEl = document.querySelector('#result');
@@ -11,6 +12,25 @@ let firstNum = 0;
 let secondNum = 0;
 let result = 0;
 let operator = '';
+
+// Basic arithmetic operations
+const add = (a, b) => a + b;
+const subtract = (a, b) => a - b;
+const multiply = (a, b) => a * b;
+const divide = (a, b) => a / b;
+
+const operate = (operator, a, b) => {
+  switch (operator) {
+    case '+':
+      return add(a, b);
+    case '-':
+      return subtract(a, b);
+    case '*':
+      return multiply(a, b);
+    case '/':
+      return divide(a, b);
+  }
+};
 
 const updateFirstNumber = (value) => {
   firstNum = firstNum === 0 ? value : firstNum + value;
@@ -44,98 +64,75 @@ const clear = () => {
   errorEl.textContent = '';
 };
 
-digits.forEach((d) =>
-  d.addEventListener('click', (e) => {
-    const value = d.dataset.value;
+containers.forEach((container) => {
+  container.addEventListener('click', (e) => {
+    const value = e.target.dataset.value;
 
-    if (result) {
-      clear();
+    if (e.target.classList.contains('digit')) {
+      if (result) {
+        clear();
+      }
+
+      if (firstNum && operator) {
+        updateSecondNumber(value);
+      } else {
+        updateFirstNumber(value);
+      }
     }
 
-    if (firstNum && operator) {
-      updateSecondNumber(value);
-    } else {
-      updateFirstNumber(value);
-    }
-  }),
-);
+    if (e.target.classList.contains('operator')) {
+      if (value === '=' && !secondNum) {
+        return;
+      }
 
-operators.forEach((o) =>
-  o.addEventListener('click', (e) => {
-    const value = o.dataset.value;
+      if (value === 'c') {
+        clear();
+        return;
+      }
 
-    if (value === '=' && !secondNum) {
-      return;
-    }
+      if (isNaN(result)) {
+        throw new Error('You bastard');
+        clear();
+        errorEl.textContent = 'You bastard.';
+      }
 
-    if (value === 'c') {
-      clear();
-      return;
-    }
-
-    // TODO: Add keyboard support
-
-    if (isNaN(result)) {
-      throw new Error('You bastard');
-      clear();
-      errorEl.textContent = 'You bastard.';
-    }
-
-    if (firstNum && operator && secondNum) {
-      if (+firstNum === 0 && operator === '/' && +secondNum === 0) {
-        try {
-          let newResult = operate(operator, +firstNum, +secondNum);
-          if (isNaN(newResult)) {
-            clear();
-            throw new Error('You shall not pass!');
+      if (firstNum && operator && secondNum) {
+        if (+firstNum === 0 && operator === '/' && +secondNum === 0) {
+          try {
+            let newResult = operate(operator, +firstNum, +secondNum);
+            if (isNaN(newResult)) {
+              clear();
+              throw new Error('You shall not pass!');
+            }
+          } catch (error) {
+            errorEl.textContent = error.message;
+            return;
           }
-        } catch (error) {
-          errorEl.textContent = error.message;
+        }
+
+        if (value === '+' || value === '-' || value === '*' || value === '/') {
+          // Chain multiple operands e.g. 1 + 1 - 1
+          let newResult = operate(operator, +firstNum, +secondNum);
+          clear();
+          updateFirstNumber(newResult);
+          updateOperator(value);
           return;
         }
+
+        if (value === '=') {
+          let newResult = operate(operator, +firstNum, +secondNum);
+
+          clear();
+          updateResult(newResult);
+          return;
+        }
+
+        return;
       }
 
-      if (value === '+' || value === '-' || value === '*' || value === '/') {
-        // Chain multiple operands e.g. 1 + 1 - 1
-        let newResult = operate(operator, +firstNum, +secondNum);
-        clear();
-        updateFirstNumber(newResult);
+      if (firstNum && value !== '=') {
         updateOperator(value);
-        return;
       }
-
-      if (value === '=') {
-        let newResult = operate(operator, +firstNum, +secondNum);
-
-        clear();
-        updateResult(newResult);
-        return;
-      }
-
-      return;
     }
-
-    if (firstNum && value !== '=') {
-      updateOperator(value);
-    }
-  }),
-);
-
-const operate = (operator, a, b) => {
-  switch (operator) {
-    case '+':
-      return add(a, b);
-    case '-':
-      return subtract(a, b);
-    case '*':
-      return multiply(a, b);
-    case '/':
-      return divide(a, b);
-  }
-};
-
-// Basic arithmetic operations
-const add = (a, b) => a + b;
-const subtract = (a, b) => a - b;
-const multiply = (a, b) => a * b;
-const divide = (a, b) => a / b;
+  });
+});
